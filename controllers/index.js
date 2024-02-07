@@ -1,5 +1,5 @@
 const { mongo } = require("mongoose");
-const books = require("../db/connect");
+const mongodb = require("../db/connect");
 const ObjectId = require("mongodb").ObjectId;
 
 const firstFunction = (req, res) => {
@@ -8,13 +8,15 @@ const firstFunction = (req, res) => {
 
 // GET all books
 const getAllBooks = async (req, res) => {
+  //console.log("hello world!");
   try {
     const result = await mongodb.getDb().db().collection("Books").find();
     result.toArray().then((lists) => {
-      res.setHeader("Content-Type", "application.json");
+      res.setHeader("Content-Type", "application/json");
       res.status(200).json(lists);
     });
   } catch (error) {
+    console.log(error);
     res.status(500).json(error);
   }
 };
@@ -26,7 +28,7 @@ const getSingleTitle = async (req, res) => {
     const result = await mongodb
       .getDb()
       .db()
-      .colletion("Library")
+      .colletion("Books")
       .find({ _id: bookId });
     result.toArray().then((lists) => {
       res.setHeader("Content-Type", "application/json");
@@ -48,7 +50,7 @@ const createTitle = async (req, res) => {
     const response = await mongodb
       .getDb()
       .db()
-      .collection("Library")
+      .collection("Books")
       .insertOne(book);
     if (response.acknowledged) {
       res.status(201).json(response);
@@ -74,7 +76,7 @@ const updateTitle = async (req, res) => {
     const response = await mongodb
       .getDb()
       .db()
-      .collection("Library")
+      .collection("Books")
       .replaceOne({ _id: bookId }, book);
     if (response.acknowledged) {
       res.status(204).json(response);
@@ -95,7 +97,7 @@ const deleteTitle = async (req, res) => {
     const response = await mongodb
       .getDb()
       .db()
-      .collection("Library")
+      .collection("Books")
       .deleteOne({ _id: bookId }, true);
     console.log(response);
     if (response.acknowledged) {
